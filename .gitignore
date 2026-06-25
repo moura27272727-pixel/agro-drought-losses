@@ -1,0 +1,38 @@
+# Крупные первичные данные (восстанавливаются через src/00_download_data.py)
+data/raw/
+# Крупный производный файл цен (пересобирается через src/00_download_data.py)
+data/processed/fao_pp_panel.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# LaTeX (промежуточные)
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.bbl
+report/*.blg
+report/*.synctex.gz
+report/*.fls
+report/*.fdb_latexmk
+slides/*.aux
+slides/*.log
+slides/*.nav
+slides/*.snm
+slides/*.toc
+slides/*.out
+
+# OS
+.DS_Store
+
+# CatBoost обучающие артефакты
+catboost_info/
+
+# архивы для Overleaf
+*.zip

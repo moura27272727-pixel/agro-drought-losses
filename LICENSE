@@ -1,0 +1,20 @@
+MIT License
+
+Copyright (c) 2026 Авторы проекта (НИУ ВШЭ)
+
+Настоящим предоставляется бесплатное разрешение любому лицу, получившему копию
+данного программного обеспечения и сопутствующих файлов (далее «ПО»), использовать
+ПО без ограничений, включая права на использование, копирование, изменение,
+слияние, публикацию, распространение, сублицензирование и/или продажу копий ПО,
+а также лицам, которым предоставляется данное ПО, при соблюдении следующих условий:
+
+Указанное выше уведомление об авторском праве и данное разрешение должны быть
+включены во все копии или существенные части ПО.
+
+ПО ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ. ДАННЫЕ (FAOSTAT, World Bank
+CCKP, NOAA) распространяются на условиях их собственных лицензий — см. data/README.md.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in the
+Software without restriction. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND. Third-party DATA retain their own licenses; see data/README.md.

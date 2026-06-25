@@ -1,0 +1,50 @@
+{
+  "belt_box": {
+    "lat": [
+      45,
+      56
+    ],
+    "lon": [
+      38,
+      62
+    ]
+  },
+  "years": [
+    1992,
+    2019
+  ],
+  "national": {
+    "spei6_vs_yield": [
+      0.34,
+      0.073,
+      28
+    ],
+    "neg_summerT_vs_yield": [
+      0.26,
+      0.178,
+      28
+    ]
+  },
+  "grain_belt": {
+    "spei6_vs_yield": [
+      0.43,
+      0.022,
+      28
+    ],
+    "neg_summerT_vs_yield": [
+      0.48,
+      0.01,
+      28
+    ]
+  },
+  "spei_2010_2012": {
+    "national": [
+      -1.93,
+      -1.58
+    ],
+    "grain_belt": [
+      -2.55,
+      -1.82
+    ]
+  }
+}

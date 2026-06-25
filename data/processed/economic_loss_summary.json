@@ -1,0 +1,65 @@
+{
+  "headline_method": "LOESS-тренд, текущие цены (консервативно)",
+  "top_years_headline": [
+    {
+      "year": 2012,
+      "mt": 14.7,
+      "bln_usd": 2.96,
+      "share_pct": 18.3
+    },
+    {
+      "year": 2021,
+      "mt": 10.9,
+      "bln_usd": 2.03,
+      "share_pct": 8.6
+    },
+    {
+      "year": 2010,
+      "mt": 9.8,
+      "bln_usd": 1.23,
+      "share_pct": 14.5
+    },
+    {
+      "year": 1995,
+      "mt": 15.0,
+      "bln_usd": 1.13,
+      "share_pct": 17.9
+    },
+    {
+      "year": 2013,
+      "mt": 5.0,
+      "bln_usd": 1.04,
+      "share_pct": 5.6
+    },
+    {
+      "year": 1996,
+      "mt": 6.1,
+      "bln_usd": 0.68,
+      "share_pct": 8.1
+    }
+  ],
+  "robustness_bln_usd": {
+    "2010": {
+      "loess_cur": 1.23,
+      "loess_const": 1.37,
+      "prev3_cur": 1.57,
+      "prev3_const": 1.77
+    },
+    "2012": {
+      "loess_cur": 2.96,
+      "loess_const": 2.11,
+      "prev3_cur": 2.26,
+      "prev3_const": 1.61
+    },
+    "2021": {
+      "loess_cur": 2.03,
+      "loess_const": 1.55,
+      "prev3_cur": 0.57,
+      "prev3_const": 0.43
+    }
+  },
+  "cumulative_2000_2022_bln_usd": {
+    "loess_cur": 11.1,
+    "prev3_cur": 6.5
+  }
+}

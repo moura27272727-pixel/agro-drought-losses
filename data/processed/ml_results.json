@@ -1,0 +1,61 @@
+{
+  "n": 1448,
+  "n_features": 16,
+  "models": {
+    "OLS": {
+      "year_blocked": {
+        "r2": 0.059,
+        "rmse": 17.27,
+        "mae": 12.76
+      },
+      "random_kfold": {
+        "r2": 0.19,
+        "rmse": 16.03,
+        "mae": 11.67
+      }
+    },
+    "RandomForest": {
+      "year_blocked": {
+        "r2": 0.042,
+        "rmse": 17.42,
+        "mae": 12.78
+      },
+      "random_kfold": {
+        "r2": 0.374,
+        "rmse": 14.08,
+        "mae": 10.11
+      }
+    },
+    "CatBoost": {
+      "year_blocked": {
+        "r2": 0.069,
+        "rmse": 17.17,
+        "mae": 12.56
+      },
+      "random_kfold": {
+        "r2": 0.369,
+        "rmse": 14.15,
+        "mae": 10.13
+      }
+    }
+  },
+  "rmse_baseline_zero": 17.84,
+  "feature_importance": {
+    "iso": 1.91,
+    "spei6_gs": 2.91,
+    "spei3_gs": 3.25,
+    "crop": 3.32,
+    "oni_djf": 4.97,
+    "spei3_min_gs": 5.17,
+    "spei12_gs": 5.31,
+    "gs_p_z": 5.34,
+    "oni_mam": 5.35,
+    "t_max_gs_z": 5.66,
+    "ann_p": 6.92,
+    "oni_jja": 7.27,
+    "spei6_gs_lag1": 7.48,
+    "gs_t_z": 9.18,
+    "ann_t": 10.11,
+    "spi6_gs": 15.84
+  }
+}
