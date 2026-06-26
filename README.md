@@ -71,7 +71,3 @@ python src/run_all.py            # загрузка данных + весь ан
 python src/run_all.py --no-download
 ```
 
-
-## Лицензия
-Код: MIT (см. [LICENSE](LICENSE)). Данные распространяются на условиях их
-собственных лицензий (см. [`data/README.md`](data/README.md)).
