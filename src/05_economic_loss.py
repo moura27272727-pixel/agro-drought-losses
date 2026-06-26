@@ -1,7 +1,6 @@
-# Считаем деньги: сколько Россия потеряла на недоборе зерна в засухи.
-# Недобор = ожидаемый урожай минус фактический (только когда он положительный).
-# Ожидаемый берём двумя способами (тренд LOESS и среднее за 3 прошлых года) и в
-# двух ценах (текущих и постоянных) - чтобы показать что вывод устойчив.
+# Денежная оценка потерь от недобора зерна (Россия).
+# Недобор = max(0, ожидаемый - фактический). Ожидаемый: тренд LOESS и среднее за 3 года.
+# Цены: текущие и постоянные (проверка устойчивости).
 import json
 import os
 import numpy as np
@@ -33,8 +32,7 @@ def main():
     ru = panel[(panel.iso == "RUS") & (panel.crop.isin(GRAINS))].copy().sort_values(["crop", "year"])
     prices = grain_prices().rename(columns={"price_usd_t": "crop_price"})
 
-    # постоянная цена = среднее за 2014-2020 по культуре. В панели price_usd_t -
-    # это цена пшеницы, используем её как запасную если по культуре цены нет.
+    # постоянная цена: среднее 2014-2020 по культуре; запасная - цена пшеницы
     const = (prices[prices.year.between(2014, 2020)].groupby("crop")["crop_price"]
              .mean().rename("price_const").reset_index())
     ru = (ru.merge(prices, on=["crop", "year"], how="left")
@@ -55,7 +53,7 @@ def main():
         g["share"] = g["v"] / g["e"] * 100
         return g
 
-    loess_cur = losses("yield_trend", "price_cur")    # основной вариант (консервативный)
+    loess_cur = losses("yield_trend", "price_cur")    # основной вариант
     loess_con = losses("yield_trend", "price_const")
     prev3_cur = losses("prev3", "price_cur")
     prev3_con = losses("prev3", "price_const")
@@ -94,7 +92,7 @@ def main():
         json.dump(summary, f, ensure_ascii=False, indent=2)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
-    # Рис.8 потери по годам: столбцы - тренд LOESS, линия - второй контрфакт
+    # Рис.8 потери по годам
     fig, ax = plt.subplots(figsize=(7.6, 4.2))
     ax.bar(out.year, out.value_lost_bln, color=viz.C_DROUGHT, alpha=0.85, label="LOESS-тренд (консерв.)")
     p3 = (prev3_cur["v"] / 1e9).reindex(out.year).values

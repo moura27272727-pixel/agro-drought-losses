@@ -1,5 +1,5 @@
 # Собираем главную таблицу для анализа: страна x год x культура.
-# Climate-признаки (SPEI/SPI, аномалии температуры и осадков, ENSO) + аномалии урожая.
+# Климатические признаки (SPEI/SPI, аномалии, ENSO) и аномалии урожая.
 # Запуск: python src/01_build_panel.py
 import os
 import numpy as np
@@ -14,7 +14,7 @@ BASE = (1991, 2020)   # период, относительно которого 
 
 
 def climate_features_for(iso):
-    # считаем климатические признаки по одной стране
+    # климатические признаки по стране
     d = dio.load_climate(iso)
     lat = dio.COUNTRIES[iso]["lat"]
     months = d["month"].values
@@ -26,7 +26,7 @@ def climate_features_for(iso):
     d["spi6"] = spi(d["pr"].values, months, 6)
     d["spi12"] = spi(d["pr"].values, months, 12)
 
-    # берём значения на август (конец вегетации) и на декабрь (за весь год)
+    # значения на август (конец вегетации) и декабрь
     aug = d[d.month == 8].set_index("year")
     dec = d[d.month == 12].set_index("year")
     feats = pd.DataFrame(index=sorted(d.year.unique()))
@@ -36,7 +36,7 @@ def climate_features_for(iso):
     feats["spi6_gs"] = aug["spi6"]
     feats["spei12_ann"] = dec["spei12"]
 
-    # лето (май-август) и год: температура и осадки, плюс их аномалии (z-оценки)
+    # лето (май-август) и год: температура, осадки и z-аномалии
     gs = d[d.month.between(5, 8)].groupby("year").agg(gs_t=("tas", "mean"), gs_p=("pr", "sum"))
     ann = d.groupby("year").agg(ann_t=("tas", "mean"), ann_p=("pr", "sum"))
     base = (d.year >= BASE[0]) & (d.year <= BASE[1])
@@ -47,7 +47,7 @@ def climate_features_for(iso):
     feats["gs_p_z"] = (gs["gs_p"] - gs_b["p"].mean()) / gs_b["p"].std()
     feats["ann_t"] = ann["ann_t"]
     feats["ann_p"] = ann["ann_p"]
-    # ещё два признака: пиковая жара лета и самый сухой месяц сезона
+    # пиковая температура лета и минимум SPEI-3 за сезон
     tmax = d[d.month.between(5, 8)].groupby("year")["tas"].max()
     tmax_b = d[base & d.month.between(5, 8)].groupby("year")["tas"].max()
     feats["t_max_gs_z"] = (tmax - tmax_b.mean()) / tmax_b.std()
@@ -63,7 +63,7 @@ def detrend_yields(yt):
     out = []
     for (iso, crop), g in yt.groupby(["iso", "crop"]):
         g = g.dropna(subset=["yield"]).sort_values("year")
-        if len(g) < 12:   # слишком короткий ряд - пропускаем культуру
+        if len(g) < 12:   # короткий ряд
             continue
         trend = lowess(g["yield"].values, g["year"].values.astype(float),
                        frac=0.5, return_sorted=False)
@@ -88,7 +88,7 @@ def main():
     panel = (yt.merge(feats, on=["iso", "year"], how="left")
                .merge(oni, on="year", how="left")
                .merge(price, on=["iso", "year"], how="left"))
-    # лаги (прошлогодние значения) - это только прошлое, в будущее не подсматриваем
+    # лаги: значения предыдущего года
     panel = panel.sort_values(["iso", "crop", "year"])
     panel["spei6_gs_lag1"] = panel.groupby(["iso", "crop"])["spei6_gs"].shift(1)
     panel["yield_anom_lag1"] = panel.groupby(["iso", "crop"])["yield_anom_pct"].shift(1)
@@ -97,7 +97,7 @@ def main():
     print("analysis_panel:", panel.shape, "| crops:", panel.crop.nunique(),
           "| countries:", panel.iso.nunique())
 
-    # 4. отдельно ряд по России (пшеница) - наш главный кейс
+    # 4. ряд по России (пшеница)
     ru = panel[(panel.iso == "RUS") & (panel.crop == "Wheat")].copy().sort_values("year")
     ru.to_csv(os.path.join(PROC, "russia_annual.csv"), index=False)
     print("russia_annual:", ru.shape, "| годы:", int(ru.year.min()), "-", int(ru.year.max()))

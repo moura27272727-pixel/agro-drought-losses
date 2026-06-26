@@ -1,5 +1,5 @@
-# Загрузка данных: FAOSTAT (урожай + цены), климат CCKP, индекс Эль-Ниньо (ONI).
-# Заодно тут списки стран и культур, которые берём в работу.
+# Загрузка данных: FAOSTAT (урожай, цены), климат CCKP, ONI.
+# Конфигурация стран и культур.
 import json
 import os
 import numpy as np
@@ -10,7 +10,7 @@ ROOT = os.path.dirname(HERE)
 RAW = os.path.join(ROOT, "data", "raw")
 PROC = os.path.join(ROOT, "data", "processed")
 
-# страны зернового пояса. lat - примерная широта зерновых районов (нужна для PET).
+# страны зернового пояса; lat - широта для PET
 COUNTRIES = {
     "RUS": {"fao": "Russian Federation", "ru": "Россия", "lat": 53.0},
     "UKR": {"fao": "Ukraine", "ru": "Украина", "lat": 49.0},
@@ -58,7 +58,7 @@ def producer_price_wheat():
     # цена пшеницы (USD/т и в нац. валюте) по странам и годам
     pp = pd.read_csv(os.path.join(PROC, "fao_pp_panel.csv"))
     pp = pp[(pp["Area"].isin(FAO2ISO)) & (pp["Item"] == "Wheat")].copy()
-    if "Months" in pp.columns:           # берём только годовые значения, а не помесячные
+    if "Months" in pp.columns:           # только годовые значения
         pp = pp[pp["Months"] == "Annual value"]
     pp["iso"] = pp["Area"].map(FAO2ISO)
     out = {}
@@ -69,7 +69,7 @@ def producer_price_wheat():
                .drop_duplicates(["iso", "year"]))
         out[col] = sub
     res = out["price_usd_t"].merge(out["price_lcu_t"], on=["iso", "year"], how="outer")
-    return res.drop_duplicates(["iso", "year"])   # на всякий случай ещё раз дубли убрать
+    return res.drop_duplicates(["iso", "year"])   # удаление дубликатов
 
 
 def load_climate(iso):
@@ -87,7 +87,7 @@ def load_climate(iso):
 
 
 def load_oni():
-    # индекс Эль-Ниньо (ONI) по сезонам и годам из текстового файла NOAA
+    # ONI по сезонам и годам (NOAA)
     path = os.path.join(RAW, "noaa_oni.txt")
     rows = []
     f = open(path)

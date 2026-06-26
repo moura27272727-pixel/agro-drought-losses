@@ -1,7 +1,7 @@
-# общий стиль для графиков + сохранялка (pdf для отчёта, png для слайдов)
+# единый стиль графиков; сохранение в pdf и png
 import os
 import matplotlib
-matplotlib.use("Agg")          # без этого на сервере без дисплея падает
+matplotlib.use("Agg")          # backend без дисплея
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -10,7 +10,7 @@ FIG = os.path.join(ROOT, "figures")
 os.makedirs(FIG, exist_ok=True)
 
 plt.rcParams.update({
-    "font.family": "DejaVu Sans",   # чтобы кириллица не стала квадратиками
+    "font.family": "DejaVu Sans",   # шрифт с кириллицей
     "font.size": 11,
     "axes.titlesize": 12,
     "axes.titleweight": "bold",
@@ -21,7 +21,7 @@ plt.rcParams.update({
     "figure.dpi": 110,
 })
 
-# цвета (засуха - красный, норма - синий и т.д.)
+# палитра
 C_DROUGHT = "#b5341f"
 C_NORMAL = "#2b6a8f"
 C_TREND = "#d68a1e"

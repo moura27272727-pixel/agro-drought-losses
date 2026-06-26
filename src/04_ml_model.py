@@ -1,7 +1,6 @@
 # ML-модель: предсказываем аномалию урожая по климату.
 # Сравниваем OLS / RandomForest / CatBoost.
-# Две проверки: обычная случайная CV (как в статьях) и строгая по годам
-# (прогноз на годы, которых модель не видела - это честнее, но труднее).
+# Две схемы кросс-валидации: случайная и групповая по годам.
 import json
 import os
 import numpy as np
@@ -19,8 +18,7 @@ import viz
 PROC = dio.PROC
 SEED = 42
 
-# берём только климатические признаки (год и лаг урожая не берём, чтобы мерить
-# именно вклад климата). lag1 у SPEI - это прошлый год, не подсматривание.
+# климатические признаки (без года и лага урожая)
 NUM = ["spei3_gs", "spei6_gs", "spei12_gs", "spi6_gs", "gs_t_z", "gs_p_z",
        "t_max_gs_z", "spei3_min_gs", "spei6_gs_lag1",
        "ann_t", "ann_p", "oni_djf", "oni_mam", "oni_jja"]
@@ -34,7 +32,7 @@ LAB = {"spei3_gs": "SPEI-3", "spei6_gs": "SPEI-6", "spei12_gs": "SPEI-12",
 
 
 def cv_predict(make_model, X, y, splits, cat_idx=None):
-    # прогноз на каждом фолде, потом усредняем (для повторной CV)
+    # out-of-fold прогноз, усреднение по повторам
     preds = np.zeros(len(y))
     counts = np.zeros(len(y))
     for tr, te in splits:
@@ -50,7 +48,7 @@ def cv_predict(make_model, X, y, splits, cat_idx=None):
             mean_absolute_error(y, yhat), yhat)
 
 
-# фабрики моделей (каждый раз новая, чтобы не утекало между фолдами)
+# конструкторы моделей
 def mk_cat():
     return CatBoostRegressor(iterations=500, depth=4, learning_rate=0.04,
                              l2_leaf_reg=6.0, loss_function="RMSE",
@@ -105,7 +103,7 @@ def main():
     res["rmse_baseline_zero"] = round(np.sqrt(mean_squared_error(y, np.zeros_like(y))), 2)
     print(json.dumps(res, ensure_ascii=False, indent=2))
 
-    # финальный CatBoost на всех данных - для важности признаков и графиков
+    # CatBoost на всех данных: важность признаков и графики
     final = mk_cat(); final.fit(Xc, y, cat_features=cat_idx)
     imp = pd.Series(final.get_feature_importance(), index=Xc.columns).sort_values()
     res["feature_importance"] = {k: round(v, 2) for k, v in imp.items()}
@@ -119,7 +117,7 @@ def main():
     ax.set_xlabel("Вклад в прогноз, %")
     viz.save(fig, "fig05_feature_importance")
 
-    # Рис.6 частные зависимости (как меняется прогноз при изменении одного признака)
+    # Рис.6 частные зависимости
     fig, axes = plt.subplots(1, 2, figsize=(9.5, 4.0))
     for ax, feat, lab in [(axes[0], "spei6_gs", "SPEI-6 (вегетация)"),
                           (axes[1], "t_max_gs_z", "Пик жары лета (z)")]:

@@ -10,7 +10,7 @@ import data_io as dio
 import viz
 
 PROC = dio.PROC
-DROUGHT_YEARS_RU = [1998, 2010, 2012, 2021]   # засушливые годы в РФ (подсветим на графике)
+DROUGHT_YEARS_RU = [1998, 2010, 2012, 2021]   # засушливые годы (подсветка)
 
 
 def corr(a, b):
@@ -36,7 +36,7 @@ def main():
     y = ru["yield_anom_pct"].values
     for col, name in metrics.items():
         x = ru[col].values.astype(float)
-        sign = -1 if col in ("gs_t_z",) else 1   # жара со знаком минус, ждём + корреляцию
+        sign = -1 if col in ("gs_t_z",) else 1   # знак: ожидаем положительную корреляцию
         r, p, rs, ps, n = corr(y, sign * x)
         rows.append({"scope": "RUS_wheat", "metric": name, "n": n,
                      "pearson": round(r, 2), "p": round(p, 3), "spearman": round(rs, 2)})

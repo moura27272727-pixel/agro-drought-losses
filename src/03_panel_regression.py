@@ -1,4 +1,4 @@
-# Панельные регрессии с фиксированными эффектами (это уже сложнее корреляций).
+# Панельные регрессии с фиксированными эффектами.
 # Три модели: A) пшеница, FE стран; B) все культуры, FE страна x культура;
 # C) пшеница, FE стран + годов. SE считаем по Дрисколлу-Краая.
 import json
@@ -23,8 +23,7 @@ def fit(data, entity_col, regressors, time_effects=False):
     if time_effects:
         formula += " + TimeEffects"
     mod = PanelOLS.from_formula(formula, data=d, drop_absorbed=True)
-    # SE Дрисколла-Краая: устойчивы к зависимости между странами (общий ENSO)
-    # и к маленькому числу панельных единиц - честнее, чем кластеры по 6 странам
+    # Стандартные ошибки Дрисколла-Краая (зависимость между странами, малое N).
     return mod.fit(cov_type="kernel", kernel="bartlett")
 
 
@@ -61,7 +60,7 @@ def main():
     with open(os.path.join(PROC, "panel_results.json"), "w") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
-    # собираем таблицу для отчёта (LaTeX). Звёздочки - уровни значимости.
+    # таблица для отчёта (LaTeX)
     lines = [r"\begin{tabular}{lccc}", r"\toprule",
              r" & (A) Пшеница & (B) Все культуры & (C) Пшеница \\",
              r" & FE стран & FE страна$\times$культура & FE стран+годов \\",

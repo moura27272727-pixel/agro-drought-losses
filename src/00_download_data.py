@@ -23,7 +23,7 @@ CCKP = ("https://cckpapi.worldbank.org/cckp/v1/"
 
 
 def fetch(url, dest, timeout=600):
-    # скачиваем через curl (на маке работает стабильнее python-овского ssl)
+    # загрузка через curl
     if os.path.exists(dest) and not FORCE:
         print("  skip (есть):", os.path.basename(dest))
         return
@@ -32,7 +32,7 @@ def fetch(url, dest, timeout=600):
 
 
 def filt(pattern, out, items=None):
-    # из большого csv FAOSTAT оставляем только наши страны (и культуры)
+    # фильтрация FAOSTAT по странам и культурам
     files = [x for x in glob.glob(os.path.join(RAW, pattern))
              if all(k not in x for k in ["AreaCodes", "Flags", "ItemCodes", "Elements", "NOFLAG"])]
     f = files[0]
@@ -65,7 +65,7 @@ def main():
     print("CCKP климат:")
     for iso in dio.COUNTRIES:
         for var in ("pr", "tas"):
-            suffix = "" if iso == "RUS" else "_" + iso   # для России файлы исторически без суффикса
+            suffix = "" if iso == "RUS" else "_" + iso   # файлы для RUS без суффикса
             name = "cckp_%s%s.json" % (var, suffix)
             fetch(CCKP.format(var=var, iso=iso), os.path.join(RAW, name), timeout=90)
 
